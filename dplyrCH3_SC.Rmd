@@ -1,0 +1,285 @@
+---
+title: "Verbs `filter` and `arrange`"
+date: 'Last compiled: `r format(Sys.time(), "%b %d, %Y")`'
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r, label = "SETUP", echo = FALSE, results= 'hide', message = FALSE, warning = FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE, comment = NA, fig.align = "center", fig.width = 4, fig.height = 4, message = FALSE, warning = FALSE)
+library(dplyr)
+library(hflights)
+library(scales)
+# Convert the hflights data.frame into a hflights tbl
+hflights <- tbl_df(hflights)
+# Create a random subset of size 10,000 to work with
+set.seed(123)
+train <- sample(227496, 10000)
+hflights <- hflights[train, ]
+# Create the object carriers, containing only the UniqueCarrier variable of hflights
+carriers <- hflights$UniqueCarrier
+# Both the dplyr and hflights packages are loaded into workspace
+lut <- c("AA" = "American", "AS" = "Alaska", "B6" = "JetBlue", "CO" = "Continental", 
+         "DL" = "Delta", "OO" = "SkyWest", "UA" = "United", "US" = "US_Airways", 
+         "WN" = "Southwest", "EV" = "Atlantic_Southeast", "F9" = "Frontier", 
+         "FL" = "AirTran", "MQ" = "American_Eagle", "XE" = "ExpressJet", 
+         "YV" = "Mesa")
+
+# Use lut to translate the UniqueCarrier column of hflights
+hflights$UniqueCarrier <- lut[hflights$UniqueCarrier]
+lut <- c("A" = "carrier", "B" = "weather", "C" = "FFA", 
+         "D" = "security", "E" = "not cancelled")
+
+# Use the lookup table to create a vector of code labels. 
+# Assign the vector to the CancellationCode column of hflights
+hflights$CancellationCode <- lut[hflights$CancellationCode]
+```
+
+_________________
+
+## Logical operators
+
+`R` comes with a set of logical operators that you can use to extract rows with `filter()`. These operators are
+
+`x < y`, `TRUE` if `x` is less than `y`
+
+`x <= y`, `TRUE` if `x` is less than or equal to `y`
+
+`x == y`, `TRUE` if `x` equals `y`
+
+`x != y`, `TRUE` if `x` does not equal `y`
+
+`x >= y`, `TRUE` if `x` is greater than or equal to `y`
+
+`x > y`, `TRUE` if `x` is greater than `y`
+
+`x %in% c(a, b, c)`, `TRUE` if `x` is in the vector `c(a, b, c)`
+
+
+## Instructions
+
+* Extract from `hflights` all flights that traveled 3000 or more miles. Save the result to `f1`.
+
+```{r}
+# Your code goes here
+# All flights that traveled 3000 miles or more.
+
+
+```
+
+* Extract from `hflights` all flights flown by one of `JetBlue`, `Southwest`, or `Delta` airlines and assign the result to `f2`.
+
+```{r}
+# Your code goes here
+# All flights flown by one of JetBlue, Southwest, or Delta airlines
+
+
+```
+
+* Extract from `hflights` all flights where taxiing took longer than the actual flight. Try to avoid the use of `mutate()` and do the math directly in the logical expression of `filter()`. Save the result to `f3`.
+
+```{r}
+# Your code goes here
+# All flights where taxiing took longer than flying
+
+
+```
+
+## Combining tests using boolean operators
+
+`R` also comes with a set of boolean operators that you can use to combine multiple logical tests into a single test. These include `&`, `|`, and `!`, respectively the and, or and not operators.
+
+You can thus use `R`'s `&` operator to combine logical tests in `filter()`, but that is not necessary. If you supply `filter()` with multiple tests separated by commas, it will return just the rows that satisfy each test (as if the tests were joined by an `&` operator).
+
+Finally, `filter()` makes it very easy to screen out rows that contain `NA`'s, `R`'s symbol for missing information. You can identify an `NA` with the `is.na()` function.
+
+## Instructions
+
+* Use `R`'s logical and boolean operators to select just the rows where a flight left before 5:00 am or arrived after 10:00 pm. Save the result to `f1`.
+
+```{r}
+# Your code goes here
+# all flights that departed before 5am or arrived after 10pm.
+
+
+```
+
+* Save all of the flights that departed late but arrived ahead of schedule to `f2`.
+
+```{r}
+# Your code goes here
+# all flights that departed late but arrived ahead of schedule
+
+
+```
+
+* Assign all cancelled weekend flights to `f3`. Assume that Sunday is the 7th day of the week.
+
+```{r}
+# Your code goes here
+# all cancelled weekend flights
+
+
+```
+
+* Find all of the flights that were cancelled after being delayed. These are flights that were cancelled, while having a `DepDelay` greater than zero. Assign the result to `f4`.
+
+
+```{r}
+# Your code goes here
+# all flights that were cancelled after being delayed
+
+
+```
+
+## Blend together what you've learned!
+
+So far, you have learned three data manipulation functions in the `dplyr` package. Time for a summarizing exercise to check your understanding. You will generate a new database from the `hflights` database that contains some useful information on flights that had JFK airport as their destination. You will need `select()`, `mutate()`, as well as `filter()`.
+
+## Instructions
+
+* First, use `filter()` to select the flights that had JFK as their destination and save this result to `c1`.
+
+```{r}
+# Your code goes here
+# Select the flights that had JFK as their destination
+
+
+```
+
+* Second, add a new column named `Date` to a copy of `c1`. To make `Date`, `paste()` together the `Year`, `Month` and `DayofMonth` variables, separated by a `-`. Save the result to `c2`.
+
+```{r}
+# Your code goes here
+# Combine the Year, Month and DayofMonth variables to create a Date column
+
+
+```
+
+* Finally, retain only some columns to provide an overview: `Date`, `DepTime`, `ArrTime` and `TailNum`. Do not assign the resulting database to a variable; just print it to the console.
+
+
+```{r}
+# Your code goes here
+# Retain only a subset of columns to provide an overview
+
+
+```
+
+## Recap on `select`, `mutate` and `filter`
+
+If you mastered the first three functions, i.e. `select()`, `mutate()` and `filter()`, you can already reveal interesting information from the dataset. Through a combination of these expressions or by the use of a one-liner, try to answer the following question: How many weekend flights flew a distance of more than 1000 miles but had a total taxiing time below 15 minutes?
+
+```{r}
+# Your code goes here
+
+
+```
+
+There were **Use inline R code to get answer here** weekend flights that flew a distance of more than 1000 miles but had a total taxiing time below 15 minutes.
+
+## Arranging your data
+
+The syntax of `arrange()` is the following:
+
+```{r, eval = FALSE}
+arrange(data, Var0, Var1, ... )
+```
+
+Here, data is again the `tbl` you're working with and `Var0`, `Var1`, ... are the variables according to which you arrange. When `Var0 `does not provide closure on the order, `Var1` and possibly additional variables will serve as tie breakers to decide the arrangement.
+
+`arrange()` can be used to rearrange rows according to any type of data. If you pass `arrange()` a character variable, for example, `R` will rearrange the rows in alphabetical order according to values of the variable. If you pass a factor variable, `R` will rearrange the rows according to the order of the levels in your factor (running `levels()` on the variable reveals this order).
+
+```{r}
+dtc <- filter(hflights, Cancelled == 1, !is.na(DepDelay))
+head(dtc)
+```
+
+## Instructions
+
+* Arrange `dtc` by departure delays so that the shortest departure delay is at the top of the data set. Assign the result to `a1`.
+
+```{r}
+# Your code goes here
+# Arrange dtc by departure delays
+ 
+
+```
+
+* Arrange `dtc` so that flights that were cancelled for the same reason appear next to each other and assign the resulting `tbl` to `a2`.
+
+```{r}
+# Your code goes here
+# Arrange dtc so that cancellation reasons are grouped
+
+
+```
+
+* Arrange `hflights` so that flights by the same carrier appear next to each other and within each carrier, flights that have smaller departure delays appear before flights that have higher departure delays. Do this in a one-liner and store the result in `a3`.
+
+
+```{r}
+# Your code goes here
+# Arrange according to carrier and departure delays
+
+
+```
+
+## Reverse the order of arranging
+
+By default, `arrange()` arranges the rows from smallest to largest. Rows with the smallest value of the variable will appear at the top of the data set. You can reverse this behavior with the `desc()` function. `arrange()` will reorder the rows from largest to smallest values of a variable if you wrap the variable name in `desc()` before passing it to `arrange()`.
+
+In addition to this small extension, you will make some trickier exercises.
+
+## Instructions
+
+* Arrange `hflights` so that flights by the same carrier appear next to each other and within each carrier, flights that have larger departure delays appear before flights that have smaller departure delays. Save the result to `a1`.
+
+```{r}
+# Your code goes here
+# Arrange according to carrier and decreasing departure delays
+
+
+```
+
+* Arrange the flights in `hflights` by their total delay (the sum of `DepDelay` and `ArrDelay`). Can you do this without defining any new variables? Save the result to `a2`.
+
+```{r}
+# Your code goes here
+# Arrange flights by total delay (normal order).
+
+
+```
+
+* First use filter to keep flights that have Dallas Forth Worth (DFW) as destination and departed before 8:00 am. Next, arrange the result according to `AirTime` such that the longest flights come first. Do this in a one-liner, without using a help variable! Store the result of this tricky exercise in `a3`.
+
+
+```{r}
+# Your code goes here
+# Keep flights leaving to DFW before 8am and arrange according to decreasing AirTime 
+
+
+```
+
+## Recap on `select`, `mutate`, `filter` and `arrange`
+
+Four down, one more to go! As you might have noticed, our data analysis possibilities expand with every manipulation function we learn. Can you find the appropriate strategy for the following problem?
+
+Again using `hflights`, what steps do you take to print a list containing only `TailNum` of flights that departed too late, sorted by total taxiing time?
+
+### Possible Answers
+
+* First `mutate()`, then `filter()`, `select()` and finally `arrange()`.
+* First `filter()`, then `mutate()`, `arrange()` and finally `select()`.
+* First `arrange()`, then `mutate()`, `select()` and finally `filter()`.
+* First `filter()`, then `arrange()`, `select()` and finally `mutate()`.
+
+```{r}
+# Your verification code goes here
+
+```
+
+________________
