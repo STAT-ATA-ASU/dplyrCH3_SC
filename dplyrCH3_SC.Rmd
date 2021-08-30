@@ -1,5 +1,6 @@
 ---
 title: "Verbs `filter` and `arrange`"
+author: "Your Name"
 date: 'Last compiled: `r format(Sys.time(), "%b %d, %Y")`'
 output:
   html_document:
